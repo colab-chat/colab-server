@@ -22,5 +22,10 @@ def create_db(drop_first=False):
     db.create_all()
 
 
+@manager.command
+def drop_db():
+    db.drop_all()
+
+
 if __name__ == '__main__':
     manager.run()

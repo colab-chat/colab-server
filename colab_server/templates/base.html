@@ -26,11 +26,11 @@
         {% block body %}
         <div class="with-margins">
             <a href="{{ url_for('main.index') }}">Home</a>
-            | <a href="{{ url_for('auth.login') }}">Login</a>
-            | <a href="{{ url_for('auth.register') }}">Register</a>
+            | <a href="{{ url_for('user.login') }}">Login</a>
+            | <a href="{{ url_for('user.logout') }}">Logout</a>
         </div>
         <hr class="no-margins"/>
-
+        <div> <h3>CoLab Chat</h3></div>
         <div id="main-div" class="with-margins">
 
         {% block content %}{% endblock %}
@@ -40,7 +40,7 @@
         <br/>
         <hr class="no-margins"/>
         <div id="footer-div" class="clearfix with-margins">
-            <div class="pull-right">&copy; 2017 CoLab Chat</div>
+            <div class="pull-right">&copy; 2017 CoLab
         </div>
 
         <!-- Bootstrap JS -->

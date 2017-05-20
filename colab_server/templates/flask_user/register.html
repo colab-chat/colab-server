@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'flask_user/public_base.html' %}
 
 {% block content %}
 {% from "flask_user/_macros.html" import render_field, render_submit_field %}
@@ -34,14 +34,13 @@
         {{ render_field(form.email, tabindex=220) }}
     {% endif %}
 
-    {{ render_field(form.first_name, tabindex=240) }}
+    {{ render_field(form.first_name, tabindex=220) }}
+    {{ render_field(form.last_name, tabindex=220) }}
 
-    {{ render_field(form.last_name, tabindex=250) }}
-
-    {{ render_field(form.password, tabindex=260) }}
+    {{ render_field(form.password, tabindex=230) }}
 
     {% if user_manager.enable_retype_password %}
-        {{ render_field(form.retype_password, tabindex=270) }}
+        {{ render_field(form.retype_password, tabindex=240) }}
     {% endif %}
 
     {{ render_submit_field(form.submit, tabindex=280) }}

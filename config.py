@@ -31,12 +31,12 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'colab.chat.colab_server@gmail.com'
+    MAIL_USERNAME = 'colab.chat.app@gmail.com'
     MAIL_PASSWORD = 'A$amHack2017'
-    MAIL_DEFAULT_SENDER = '"CoLab Chat" <colab.chat.colab_server@gmail.com>'
+    MAIL_DEFAULT_SENDER = '"CoLab Chat" <colab.chat.app@gmail.com>'
 
     ADMINS = [
-        '"Admin One" <colab.chat.colab_server@gmail.com>',
+        '"Admin One" <colab.chat.app@gmail.com>',
     ]
 
     # ---------------------
@@ -56,8 +56,8 @@ class Config:
     USER_ENABLE_REGISTRATION = True
     USER_ENABLE_RETYPE_PASSWORD = True
     USER_ENABLE_USERNAME = False
-    USER_AFTER_LOGIN_ENDPOINT = 'user_page'   # TODO change this
-    USER_AFTER_LOGOUT_ENDPOINT = 'home_page'  # TODO change this
+    #USER_AFTER_LOGIN_ENDPOINT = 'main.index'   # TODO change this
+    #USER_AFTER_LOGOUT_ENDPOINT = 'main.logout_screen'  # TODO change this
 
 
 class DevelopmentConfig(Config):

@@ -21,4 +21,3 @@ class User(db.Model, UserMixin):
     # Personal details
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
-    team = db.Column(db.Unicode(50), nullable=False, server_default=u'')
