@@ -1,9 +1,9 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
-
+from flask_sqlalchemy import SQLAlchemy
 from config import config
+
 
 # ----------------
 # Flask extensions
@@ -11,9 +11,6 @@ from config import config
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 mail = Mail()
-
-# Taken from Miguel's Flack app, Why do we need this?
-from . import models  # noqa
 
 
 def create_app(config_name=None):
@@ -32,17 +29,16 @@ def create_app(config_name=None):
     mail.init_app(app)
     bootstrap.init_app(app)
 
-    # -----
-    # Login
-    # -----
+    # --------------------
+    # Authentication setup
+    # --------------------
+    from .auth.setup_auth import setup_auth
+    setup_auth(app, db)
 
-    # ---------------------------
-    # Registration of blue prints
-    # ---------------------------
+    # -------------------------------
+    # Registration of main blue print
+    # -------------------------------
     from .main_view import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
-    from .auth_view import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix="/user")
 
     return app

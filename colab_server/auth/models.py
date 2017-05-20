@@ -1,4 +1,4 @@
-from . import db
+from colab_server import db
 from flask_user import UserMixin
 
 
@@ -22,4 +22,3 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     team = db.Column(db.Unicode(50), nullable=False, server_default=u'')
-
