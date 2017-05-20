@@ -1,1 +1,6 @@
 Flask
+Flask-User<0.7
+Flask-SQLAlchemy==2.1
+Flask-Bootstrap==3.3.5.7
+Flask-Script==2.0.5
+Flask-WTF==0.13.1
