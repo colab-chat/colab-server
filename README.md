@@ -16,3 +16,8 @@ to make this dependent on the configuration type, ie `production`, `development`
 
 The API of the api is/will be defined via `manage.py`. To run the server
 `python3 manage.py runserver`. Inspect the page in a browser.
+
+
+###### Lint
+
+To perform lint checking, run `python3 manage.py lint`.

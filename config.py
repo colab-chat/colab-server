@@ -15,7 +15,7 @@ class Config:
     # ----------------
     # General
     # ----------------
-    SECRET_KEY = '\xcf\xffo\xc3\xc8A\x88\xa8\x8a\xd8\xe1\xdd\xab\xeay-\xda\xfe\x14\x1bR\xc3\xd2g' # TODO make this local
+    SECRET_KEY = '\xcf\xffo\xc3\xc8A\x88\xa8\x8a\xd8\xe1\xdd\xab\xeay-\xda\xfe\x14\x1bR\xc3\xd2g' # TODO: make this local  # noqa
     CSRF_ENABLED = True
 
     # ----------------
@@ -56,8 +56,8 @@ class Config:
     USER_ENABLE_REGISTRATION = True
     USER_ENABLE_RETYPE_PASSWORD = True
     USER_ENABLE_USERNAME = False
-    #USER_AFTER_LOGIN_ENDPOINT = 'main.index'   # TODO change this
-    #USER_AFTER_LOGOUT_ENDPOINT = 'main.logout_screen'  # TODO change this
+    # USER_AFTER_LOGIN_ENDPOINT = 'main.index'   # TODO change this
+    # USER_AFTER_LOGOUT_ENDPOINT = 'main.logout_screen'  # TODO change this
 
 
 class DevelopmentConfig(Config):

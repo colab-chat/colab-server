@@ -8,6 +8,6 @@ def setup_auth(app, db):
     # Register the user manager with the app.
     # Each form that is customised needs to be added here.
     db_adapter = SQLAlchemyAdapter(db, User)
-    _ = UserManager(db_adapter=db_adapter,
+    _ = UserManager(db_adapter=db_adapter,  # noqa
                     app=app,
                     register_form=CoLabRegisterForm)
