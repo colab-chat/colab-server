@@ -1,11 +1,31 @@
 import os
+from configparser import ConfigParser
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+def secure_config(cls):
+    """
+    Adds a settings which should be kept secure.
+    """
+    config_parser = ConfigParser()
+    config_parser.read(os.path.join(os.getcwd(), 'secure_config.ini'))
+    secret_key = config_parser['db']['secret_key']
+    mail_password = config_parser['mail']['password']
+    setattr(cls, "SECRET_KEY", secret_key)
+    setattr(cls, "MAIL_PASSWORD", mail_password)
+    return cls
+
+
+# -------------------------------------------
+# Configuration for flask and its extensions
+# -------------------------------------------
+
+@secure_config
 class Config:
     DEBUG = False
     TESTING = False
+
     # ----------------
     # App settings
     # ----------------
@@ -15,7 +35,6 @@ class Config:
     # ----------------
     # General
     # ----------------
-    SECRET_KEY = '\xcf\xffo\xc3\xc8A\x88\xa8\x8a\xd8\xe1\xdd\xab\xeay-\xda\xfe\x14\x1bR\xc3\xd2g' # TODO: make this local  # noqa
     CSRF_ENABLED = True
 
     # ----------------
@@ -32,7 +51,6 @@ class Config:
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'colab.chat.app@gmail.com'
-    MAIL_PASSWORD = 'A$amHack2017'
     MAIL_DEFAULT_SENDER = '"CoLab Chat" <colab.chat.app@gmail.com>'
 
     ADMINS = [
