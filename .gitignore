@@ -102,3 +102,7 @@ ENV/
 
 # PyCharm
 .idea/
+
+# CoLab files
+colab_server.sqlite
+secure_config.ini
