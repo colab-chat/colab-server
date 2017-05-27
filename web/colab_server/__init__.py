@@ -2,8 +2,8 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from config import config
 
+from colab_server.config import config
 
 # ----------------
 # Flask extensions

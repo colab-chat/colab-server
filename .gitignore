@@ -104,5 +104,5 @@ ENV/
 .idea/
 
 # CoLab files
-colab_server.sqlite
-secure_config.ini
+web/colab_server.sqlite
+web/secure_config.ini

@@ -2,19 +2,18 @@ import subprocess
 import sys
 
 from flask_script import Manager, Server
-from colab_server import create_app, db
 
+from colab_server import create_app, db
 
 # --------------------------------
 # Flask script manager
-# This is the entry point of CoLab
 # -------------------------------
 manager = Manager(create_app)
 
 
 # Set the server configuration TODO: parametrize this to adapt according
 #                                    to app.config
-manager.add_command("runserver", Server(host="127.0.0.1", port=5000))
+# manager.add_command("runserver", Server(host="127.0.0.1", port=5000))
 
 
 # --------------------------------
@@ -34,11 +33,11 @@ def drop_db():
 
 @manager.command
 def lint():
-    lint = subprocess.call(['flake8', '--ignore=E402', 'colab_server/',
-                            'manage.py', 'config.py']) == 0
-    if lint:
+    linting = subprocess.call(['flake8', '--ignore=E402', 'colab_server/',
+                               'manage.py', 'config.py']) == 0
+    if linting:
         print('No linting issues.')
-    sys.exit(lint)
+    sys.exit(linting)
 
 
 if __name__ == '__main__':
