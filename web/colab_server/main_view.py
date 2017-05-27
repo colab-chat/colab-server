@@ -14,3 +14,4 @@ main = Blueprint('main', __name__)
 def index():
     print("INDEX PAGE")
     return render_template('index.html')
+    a = 1

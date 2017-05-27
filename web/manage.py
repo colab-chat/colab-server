@@ -1,14 +1,17 @@
 import subprocess
 import sys
+from functools import partial
 
 from flask_script import Manager, Server
-
 from colab_server import create_app, db
+from config import create_configuration
 
 # --------------------------------
 # Flask script manager
 # -------------------------------
-manager = Manager(create_app)
+configuration = create_configuration()
+app_with_configuration = partial(create_app, configuration)
+manager = Manager(app_with_configuration)
 
 
 # Set the server configuration TODO: parametrize this to adapt according
@@ -33,8 +36,8 @@ def drop_db():
 
 @manager.command
 def lint():
-    linting = subprocess.call(['flake8', '--ignore=E402', 'colab_server/',
-                               'manage.py', 'config.py']) == 0
+    linting = subprocess.call(['flake8', '--ignore=E402', '/colab_server/',
+                               'manage.py', 'config.py', 'wsgi.py']) == 0
     if linting:
         print('No linting issues.')
     sys.exit(linting)

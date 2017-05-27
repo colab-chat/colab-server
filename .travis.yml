@@ -4,4 +4,4 @@ python:
 # install dependencies
 install: "pip install -r requirements.txt"
 # run linter
-script: python manage.py lint
+script: python ./web/manage.py lint

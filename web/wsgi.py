@@ -1,4 +1,6 @@
-import os
 from colab_server import create_app
+from config import create_configuration
 
-application = create_app(os.environ.get('COLAB_CONFIG', 'production'))
+# Get a configuration
+configuration = create_configuration()
+application = create_app(configuration=configuration)
