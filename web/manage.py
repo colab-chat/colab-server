@@ -40,8 +40,9 @@ def lint():
                                'manage.py', 'config.py', 'wsgi.py']) == 0
     if linting:
         print('No linting issues.')
-    sys.exit(linting)
-
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 if __name__ == '__main__':
     manager.run()
