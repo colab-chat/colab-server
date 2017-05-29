@@ -11,11 +11,12 @@ def secure_config(cls):
     config_parser = ConfigParser()
     configuration_directory = os.path.dirname(__file__)
     secure_path = os.path.join(configuration_directory, 'secure_config.ini')
-    config_parser.read(secure_path)
-    secret_key = config_parser['db']['secret_key']
-    mail_password = config_parser['mail']['password']
-    setattr(cls, "SECRET_KEY", secret_key)
-    setattr(cls, "MAIL_PASSWORD", mail_password)
+    if secure_path:
+        config_parser.read(secure_path)
+        secret_key = config_parser['db']['secret_key']
+        mail_password = config_parser['mail']['password']
+        setattr(cls, "SECRET_KEY", secret_key)
+        setattr(cls, "MAIL_PASSWORD", mail_password)
     return cls
 
 
