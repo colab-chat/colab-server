@@ -2,7 +2,6 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from config import config
 
 
 # ----------------
@@ -13,14 +12,14 @@ bootstrap = Bootstrap()
 mail = Mail()
 
 
-def create_app(config_name=None):
+def create_app(configuration):
     # ------------------------
     # Set up colab_server configuration
     # ------------------------
-    if config_name is None:
-        config_name = 'development'
+    if configuration is None:
+        raise ValueError("Missing configuration for CoLab")
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
+    app.config.from_object(configuration)
 
     # ---------------------------
     # Initialize flask extensions

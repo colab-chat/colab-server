@@ -2,6 +2,6 @@ language: python
 python:
   - "3.5"
 # install dependencies
-install: "pip install -r requirements.txt"
+install: "pip install -r ./web/requirements.txt"
 # run linter
-script: python manage.py lint
+script: python ./web/manage.py lint

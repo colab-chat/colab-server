@@ -9,18 +9,23 @@ def secure_config(cls):
     Adds a settings which should be kept secure.
     """
     config_parser = ConfigParser()
-    config_parser.read(os.path.join(os.getcwd(), 'secure_config.ini'))
-    secret_key = config_parser['db']['secret_key']
-    mail_password = config_parser['mail']['password']
-    setattr(cls, "SECRET_KEY", secret_key)
-    setattr(cls, "MAIL_PASSWORD", mail_password)
+    configuration_directory = os.path.dirname(__file__)
+    secure_path = os.path.join(configuration_directory, 'secure_config.ini')
+    config_parser.read(secure_path)
+    if 'db' in config_parser:
+        secret_key = config_parser['db']['secret_key']
+        setattr(cls, "SECRET_KEY", secret_key)
+    else:
+        setattr(cls, "SECRET_KEY", "testing_key")
+    if 'mail' in config_parser:
+        mail_password = config_parser['mail']['password']
+        setattr(cls, "MAIL_PASSWORD", mail_password)
     return cls
 
 
 # -------------------------------------------
 # Configuration for flask and its extensions
 # -------------------------------------------
-
 @secure_config
 class Config:
     DEBUG = False
@@ -91,6 +96,24 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 
-config = {'development': DevelopmentConfig,
-          'production': ProductionConfig,
-          'testing': TestingConfig}
+def create_configuration(configuration_type=None):
+    """
+    Creates a configuration for flask to set up itself and the extensions. The
+    configuration can be either DevelopmentConfig, ProductionConfig or TestingConfig.
+    
+    :param configuration_type: The type of configuration as a string
+    :return: a configuration class
+    """
+    config = {'development': DevelopmentConfig,
+              'production': ProductionConfig,
+              'testing': TestingConfig}
+
+    if configuration_type is None:
+        configuration_name = os.environ.get('COLAB_CONFIG', 'production')
+        return config[configuration_name]
+    elif configuration_type in config:
+        return config[configuration_type]
+    else:
+        raise ValueError("The colab configuration {} is not known. "
+                         "Please select production, development or testing or"
+                         " set up the appropriate environment variable".format(configuration_type))

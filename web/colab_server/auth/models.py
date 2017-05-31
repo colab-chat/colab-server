@@ -1,5 +1,6 @@
-from colab_server import db
 from flask_user import UserMixin
+
+from colab_server import db
 
 
 # ------------------------------
