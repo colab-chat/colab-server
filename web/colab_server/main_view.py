@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, Response
 from flask_user import login_required
+import gevent
 from flask_sse import sse
 
 # -------------------------------
@@ -12,7 +13,6 @@ main = Blueprint('main', __name__)
 @main.route('/index')
 @login_required
 def index():
-    print("INDEX PAGE")
     return render_template('index.html')
 
 

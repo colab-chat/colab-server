@@ -8,3 +8,4 @@ flake8
 gevent
 uwsgi
 Flask-sse
+gunicorn
