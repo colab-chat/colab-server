@@ -2,7 +2,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_sse import sse
 
 # ----------------
 # Flask extensions
@@ -39,5 +39,7 @@ def create_app(configuration):
     # -------------------------------
     from .main_view import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    app.register_blueprint(sse, url_prefix="/stream")
 
     return app

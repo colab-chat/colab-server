@@ -8,6 +8,8 @@ services:
      - "8000"
    volumes:
      - ./web:/colab
+   depends_on:
+     - redis
 
  nginx:
    restart: always
@@ -16,3 +18,7 @@ services:
      - "80:80"
    depends_on:
      - web
+
+ redis:
+   restart: always
+   image: redis

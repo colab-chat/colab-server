@@ -82,6 +82,8 @@ class Config:
     # USER_AFTER_LOGIN_ENDPOINT = 'main.index'   # TODO change this
     # USER_AFTER_LOGOUT_ENDPOINT = 'main.logout_screen'  # TODO change this
 
+    REDIS_URL = "redis://redis:6379"
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
