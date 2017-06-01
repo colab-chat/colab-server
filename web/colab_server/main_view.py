@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template
 from flask_user import login_required
-import gevent
 from flask_sse import sse
 
 # -------------------------------
