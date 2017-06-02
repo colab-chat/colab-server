@@ -4,7 +4,7 @@ This is the server part of the CoLab chat app.
 
 #### Set up
 
-To install the dependencies run `pip3 install requirements.txt`
+To install the dependencies run `pip3 install -r requirements.txt`
 Note that you need to create a database with `python3 ./web/manage.py create_db` to be able
 to store user data.
 
