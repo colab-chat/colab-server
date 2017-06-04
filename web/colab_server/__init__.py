@@ -2,7 +2,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from flask_sse import sse
+from .flask_sse_kafka import sse
 
 # ----------------
 # Flask extensions

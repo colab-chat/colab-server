@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_user import login_required
-from flask_sse import sse
+from .flask_sse_kafka import sse
 
 # -------------------------------
 # Main blueprint
