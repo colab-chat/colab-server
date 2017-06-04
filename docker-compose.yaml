@@ -9,7 +9,7 @@ services:
    volumes:
      - ./web:/colab
    depends_on:
-     - redis
+     - kafka1
 
  nginx:
    restart: always
@@ -18,10 +18,6 @@ services:
      - "80:80"
    depends_on:
      - web
-
- redis:
-   restart: always
-   image: redis
 
  kafka1:
    image: wurstmeister/kafka
@@ -32,7 +28,7 @@ services:
    environment:
      KAFKA_LOG_DIRS: /kafka
      KAFKA_BROKER_ID: 1
-     # KAFKA_CREATE_TOPICS: test-topic-1:1:2,test-topic-2:1:2,test-topic-3:1:2
+     KAFKA_CREATE_TOPICS: test_avro_topic:1:1
      KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
      KAFKA_ADVERTISED_PORT: 9092
      KAFKA_LOG_RETENTION_HOURS: "1"
