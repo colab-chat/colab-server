@@ -28,7 +28,7 @@ def secure_config(cls):
 # -------------------------------------------
 @secure_config
 class Config:
-    _NAME = ""
+    name = ""
 
     DEBUG = False
     TESTING = False
@@ -71,7 +71,7 @@ class Config:
 
     # ---------------------
     # Flask User
-    # --------------------
+    # ---------------------
     USER_APP_NAME = APP_NAME
     USER_ENABLE_CHANGE_PASSWORD = True
     USER_ENABLE_CHANGE_USERNAME = False
@@ -86,23 +86,19 @@ class Config:
 
     REDIS_URL = "redis://redis:6379"
 
-    @property
-    def name(self):
-        return self._NAME
-
 
 class DevelopmentConfig(Config):
-    _NAME = "development"
+    name = "development"
     DEBUG = True
 
 
 class ProductionConfig(Config):
-    _NAME = "production"
+    name = "production"
     pass
 
 
 class TestingConfig(Config):
-    _NAME = "testing"
+    name = "testing"
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
@@ -123,7 +119,7 @@ def create_configuration(configuration_type=None):
         configuration_name = os.environ.get('COLAB_CONFIG', ProductionConfig.name)
         return config[configuration_name]
     elif configuration_type in config:
-        return config[configuration_type]
+        return config[configuration_type.name()]
     else:
         raise ValueError("The colab configuration {} is not known. "
                          "Please select production, development or testing or"
