@@ -20,6 +20,7 @@ def create_app(configuration):
         raise ValueError("Missing configuration for CoLab")
     app = Flask(__name__)
     app.config.from_object(configuration)
+    print("Set up application with configuration for {}.".format(configuration.name))
 
     # ---------------------------
     # Initialize flask extensions
