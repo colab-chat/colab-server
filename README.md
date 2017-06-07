@@ -4,9 +4,16 @@ This is the server part of the CoLab chat app.
 
 #### Set up
 
-To install the dependencies run `pip3 install requirements.txt`
-Note that you need to create a database with `python3 ./web/manage.py create_db` to be able
+To install the python dependencies run `pip install -r requirements.txt`
+Note that you need to create a database with `python ./web/manage.py create_db` to be able
 to store user data.
+
+You will also need to install docker and docker-compose. For example on Ubuntu:
+```
+sudo apt install docker
+sudo apt install docker-compose
+sudo usermod -aG docker $USER
+```
 
 
 ##### Run
@@ -18,4 +25,4 @@ are to come. In addition to `production` we will support `development` and `test
 
 ###### Lint
 
-To perform lint checking, run `python3 ./web/manage.py lint`.
+To perform lint checking, run `python ./web/manage.py lint`.
