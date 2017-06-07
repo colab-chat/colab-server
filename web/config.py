@@ -90,6 +90,7 @@ class Config:
 class DevelopmentConfig(Config):
     name = "development"
     DEBUG = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class ProductionConfig(Config):
