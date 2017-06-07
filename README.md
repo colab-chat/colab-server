@@ -18,10 +18,15 @@ sudo usermod -aG docker $USER
 
 ##### Run
 
-To start the webserver: `docker-compose up -d`.
-The page is served to `loacalhost:80` running with `production` settings. More generic settings
-are to come. In addition to `production` we will support `development` and `testing`.
+To start the webserver use `colab.py`.
+To run in production mode you can either use `./colab.py` or `./colab.py -r 0` or `./colab.py --run 0`.
+To run in development mode you can either use `./colab.py -r 1` or `./colab.py --run 1`.
+To run in detached mode add `-d` or `--detached`.
+To stop use `./colab.py -s` or `./colab.py --stop`.
 
+Testing environment support is to come.
+ 
+The page is served to `loacalhost:80`.
 
 ###### Lint
 
