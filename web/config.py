@@ -120,7 +120,7 @@ def create_configuration(configuration_type=None):
         configuration_name = os.environ.get('COLAB_CONFIG', ProductionConfig.name)
         return config[configuration_name]
     elif configuration_type in config:
-        return config[configuration_type.name()]
+        return config[configuration_type.name]
     else:
         raise ValueError("The colab configuration {} is not known. "
                          "Please select production, development or testing or"
