@@ -3,6 +3,8 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_sse import sse
+from flask_debugtoolbar import DebugToolbarExtension
+
 
 # ----------------
 # Flask extensions
@@ -10,6 +12,7 @@ from flask_sse import sse
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 mail = Mail()
+debug_toolbar = DebugToolbarExtension()
 
 
 def create_app(configuration):
@@ -28,6 +31,7 @@ def create_app(configuration):
     db.init_app(app)
     mail.init_app(app)
     bootstrap.init_app(app)
+    debug_toolbar.init_app(app)
 
     # --------------------
     # Authentication setup
