@@ -16,6 +16,8 @@ services:
    build: ./nginx
    ports:
      - "80:80"
+   volumes:
+     - ./web:/colab
    depends_on:
      - web
 
