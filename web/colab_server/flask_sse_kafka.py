@@ -4,8 +4,9 @@ from kafka import KafkaProducer
 from .streaming.avroserialiser import AvroSerialiser
 from .streaming.avrodeserialiser import AvroDeserialiser
 from .messages.message import Message
+from time import sleep
 
-KAFKA_BROKER = '192.168.99.100'
+KAFKA_BROKER = 'kafka'
 serialiser = AvroSerialiser()
 deserialiser = AvroDeserialiser()
 
@@ -34,7 +35,7 @@ class ServerSentEventsBlueprint(Blueprint):
                              auto_offset_reset='earliest',
                              enable_auto_commit=False)
 
-    def publish(self, message, channel='test_avro_topic'):
+    def publish(self, message, channel='test_avro_topic', type=None):
         """
         Publish data as a server-sent event.
         :param message: The message to send.
@@ -75,10 +76,17 @@ class ServerSentEventsBlueprint(Blueprint):
         A view function that streams server-sent events. Ignores any
         :mailheader:`Last-Event-ID` headers in the HTTP request.
         """
+        #@stream_with_context
+        #def generator():
+        #    for message in self.messages():
+        #        yield str(message)
         @stream_with_context
         def generator():
-            for message in self.messages():
-                yield str(message)
+            for x in range(10):
+                sleep(3)
+                payload = {'message': 'Could you move a little faster?',
+                           'author': 'Whiting'}
+                yield "data: %s\n\n" % json.dumps(payload)
 
         return current_app.response_class(
             generator(),

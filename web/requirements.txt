@@ -7,7 +7,6 @@ Flask-WTF==0.13.1
 flake8
 gevent
 gunicorn
-redis
 kafka
 fastavro
 nbformat
