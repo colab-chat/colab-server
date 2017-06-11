@@ -4,7 +4,6 @@ from kafka import KafkaProducer
 from .streaming.avroserialiser import AvroSerialiser
 from .streaming.avrodeserialiser import AvroDeserialiser
 from .messages.message import Message
-from time import sleep
 
 KAFKA_BROKER = 'kafka'
 serialiser = AvroSerialiser()
@@ -46,6 +45,7 @@ class ServerSentEventsBlueprint(Blueprint):
             Defaults to "test_avro_topic".
         """
         assert (isinstance(message, Message))
+        current_app.my_logger.warning('publishing message')
         return self.producer.send(channel, message.serialize())
 
     def messages(self):
@@ -53,14 +53,20 @@ class ServerSentEventsBlueprint(Blueprint):
         A generator of ...
         """
         # TODO need to manage which topics we are subscribed to
+        current_app.logger.info('hit messages method 0')
         partitions = self.consumer.poll(timeout_ms=100, max_records=50)
+        current_app.logger.info('hit messages method 1')
         if len(partitions) > 0:
+            current_app.logger.info('hit messages method 2')
             for p in partitions:
+                current_app.logger.info('hit messages method 3')
                 for response in partitions[p]:
+                    current_app.logger.info('hit messages method 4')
                     message = deserialiser.deserialise(response.value)
                     raw_message = message.get_raw_message()
                     if isinstance(raw_message, bytes):
                         raw_message = raw_message.decode('utf8')
+                    current_app.logger.info(raw_message)
                     raw_message = raw_message.replace("'", "&#39;")
                     payload = {'message': message.get_html(),
                                'author': message.get_author(),
@@ -76,17 +82,21 @@ class ServerSentEventsBlueprint(Blueprint):
         A view function that streams server-sent events. Ignores any
         :mailheader:`Last-Event-ID` headers in the HTTP request.
         """
-        #@stream_with_context
-        #def generator():
-        #    for message in self.messages():
-        #        yield str(message)
+        current_app.my_logger.info('hit stream method')
+
         @stream_with_context
         def generator():
-            for x in range(10):
-                sleep(3)
-                payload = {'message': 'Could you move a little faster?',
-                           'author': 'Whiting'}
-                yield "data: %s\n\n" % json.dumps(payload)
+            current_app.logger.info('hit generator method')
+            for message in self.messages():
+                current_app.my_logger.info('Message in generator')
+                yield str(message)
+        #@stream_with_context
+        #def generator():
+        #    for x in range(10):
+        #        sleep(3)
+        #        payload = {'message': 'Could you move a little faster?',
+        #                   'author': 'Whiting'}
+        #        yield str("data: %s\n\n" % json.dumps(payload))
 
         return current_app.response_class(
             generator(),

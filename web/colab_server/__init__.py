@@ -1,4 +1,5 @@
 from flask import Flask
+import logging
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +28,19 @@ def create_app(configuration):
     db.init_app(app)
     mail.init_app(app)
     bootstrap.init_app(app)
+
+    # ---------------------------
+    # Logger
+    # ---------------------------
+    file_handler = logging.FileHandler('web_log.txt')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    app.my_logger = logging.getLogger("app_logger")
+    app.my_logger.addHandler(file_handler)
+    app.my_logger.setLevel(logging.DEBUG)
 
     # --------------------
     # Authentication setup
