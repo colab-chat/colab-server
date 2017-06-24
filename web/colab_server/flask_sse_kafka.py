@@ -4,6 +4,7 @@ from kafka import KafkaProducer
 from .streaming.avroserialiser import AvroSerialiser
 from .streaming.avrodeserialiser import AvroDeserialiser
 from .messages.message import Message
+from time import sleep
 
 KAFKA_BROKER = 'kafka'
 serialiser = AvroSerialiser()
@@ -34,7 +35,7 @@ class ServerSentEventsBlueprint(Blueprint):
                              auto_offset_reset='earliest',
                              enable_auto_commit=False)
 
-    def publish(self, message, channel='test_avro_topic', type=None):
+    def publish(self, message, channel='test_avro_topic'):
         """
         Publish data as a server-sent event.
         :param message: The message to send.
@@ -53,29 +54,23 @@ class ServerSentEventsBlueprint(Blueprint):
         A generator of ...
         """
         # TODO need to manage which topics we are subscribed to
-        current_app.logger.info('hit messages method 0')
-        partitions = self.consumer.poll(timeout_ms=100, max_records=50)
-        current_app.logger.info('hit messages method 1')
-        if len(partitions) > 0:
-            current_app.logger.info('hit messages method 2')
-            for p in partitions:
-                current_app.logger.info('hit messages method 3')
-                for response in partitions[p]:
-                    current_app.logger.info('hit messages method 4')
-                    message = deserialiser.deserialise(response.value)
-                    raw_message = message.get_raw_message()
-                    if isinstance(raw_message, bytes):
-                        raw_message = raw_message.decode('utf8')
-                    current_app.logger.info(raw_message)
-                    raw_message = raw_message.replace("'", "&#39;")
-                    payload = {'message': message.get_html(),
-                               'author': message.get_author(),
-                               'raw_message': raw_message,
-                               'time_created': message.get_time_created().strftime("%H:%M:%S %B %d, %Y"),
-                               'topic': message.get_topic(),
-                               'message_type': message.get_message_type().value}
+        # current_app.logger.info("in messages method")
+        for response in self.consumer:
+            # current_app.logger.info("consumer got a response")
+            message = deserialiser.deserialise(response.value)
+            raw_message = message.get_raw_message()
+            if isinstance(raw_message, bytes):
+                raw_message = raw_message.decode('utf8')
+            current_app.logger.info(raw_message)
+            raw_message = raw_message.replace("'", "&#39;")
+            payload = {'message': message.get_html(),
+                       'author': message.get_author(),
+                       'raw_message': raw_message,
+                       'time_created': message.get_time_created().strftime("%H:%M:%S %B %d, %Y"),
+                       'topic': message.get_topic(),
+                       'message_type': message.get_message_type().value}
 
-                    yield "data: %s\n\n" % json.dumps(payload)
+            yield json.dumps(payload)
 
     def stream(self):
         """
@@ -86,17 +81,23 @@ class ServerSentEventsBlueprint(Blueprint):
 
         @stream_with_context
         def generator():
-            current_app.logger.info('hit generator method')
+            # current_app.logger.info('hit generator method')
             for message in self.messages():
-                current_app.my_logger.info('Message in generator')
-                yield str(message)
-        #@stream_with_context
-        #def generator():
-        #    for x in range(10):
-        #        sleep(3)
-        #        payload = {'message': 'Could you move a little faster?',
-        #                   'author': 'Whiting'}
-        #        yield str("data: %s\n\n" % json.dumps(payload))
+                # current_app.my_logger.info('Message in generator')
+                lines = ["data:{value}".format(value=line) for line in message.splitlines()]
+                lines.insert(0, "event:{value}".format(value='message'))
+                yield "\n".join(lines) + "\n\n"
+
+        @stream_with_context
+        def fake_generator():
+            for x in range(10):
+                sleep(3)
+                payload = {'message': 'Could you move a little faster?',
+                           'author': 'Whiting'}
+                data = json.dumps(payload)
+                lines = ["data:{value}".format(value=line) for line in data.splitlines()]
+                lines.insert(0, "event:{value}".format(value='message'))
+                yield "\n".join(lines) + "\n\n"
 
         return current_app.response_class(
             generator(),
