@@ -1,9 +1,8 @@
 from flask import Blueprint, request, current_app, json, stream_with_context
-from kafka import KafkaConsumer
-from kafka import KafkaProducer
 from .streaming.avroserialiser import AvroSerialiser
 from .streaming.avrodeserialiser import AvroDeserialiser
 from .messages.message import Message
+from confluent_kafka import Producer, Consumer, KafkaError
 from time import sleep
 
 KAFKA_BROKER = 'kafka'
@@ -22,18 +21,15 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         A :class:`kafka.KafkaProducer` instance
         """
-        return KafkaProducer(bootstrap_servers=[KAFKA_BROKER])
+        return Producer({'bootstrap.servers': KAFKA_BROKER})
 
     @property
     def consumer(self):
         """
         A :class:`kafka.KafkaConsumer` instance
         """
-        return KafkaConsumer('test_avro_topic',
-                             group_id=None,
-                             bootstrap_servers=[KAFKA_BROKER],
-                             auto_offset_reset='earliest',
-                             enable_auto_commit=False)
+        return Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': None,
+                         'default.topic.config': {'auto.offset.reset': 'smallest'}})
 
     def publish(self, message, channel='test_avro_topic'):
         """
@@ -47,7 +43,8 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         assert (isinstance(message, Message))
         current_app.my_logger.warning('publishing message')
-        return self.producer.send(channel, message.serialize())
+        self.producer.produce(channel, message.serialize())
+        self.producer.flush()
 
     def messages(self):
         """
@@ -55,22 +52,18 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         # TODO need to manage which topics we are subscribed to
         # current_app.logger.info("in messages method")
-        for response in self.consumer:
-            # current_app.logger.info("consumer got a response")
-            message = deserialiser.deserialise(response.value)
-            raw_message = message.get_raw_message()
-            if isinstance(raw_message, bytes):
-                raw_message = raw_message.decode('utf8')
-            current_app.logger.info(raw_message)
-            raw_message = raw_message.replace("'", "&#39;")
-            payload = {'message': message.get_html(),
-                       'author': message.get_author(),
-                       'raw_message': raw_message,
-                       'time_created': message.get_time_created().strftime("%H:%M:%S %B %d, %Y"),
-                       'topic': message.get_topic(),
-                       'message_type': message.get_message_type().value}
-
-            yield json.dumps(payload)
+        self.consumer.subscribe(['test_avro_topic'])
+        running = True
+        while running:
+            msg = self.consumer.poll()
+            if not msg.error():
+                # print('Received message: %s' % msg.value().decode('utf-8'))
+                payload = {'message': 'Could you move a little faster?',
+                           'author': 'Whiting'}
+                yield json.dumps(payload)
+            elif msg.error().code() != KafkaError._PARTITION_EOF:
+                current_app.logger.error(msg.error())
+                running = False
 
     def stream(self):
         """
