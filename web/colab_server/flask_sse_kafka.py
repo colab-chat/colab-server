@@ -54,26 +54,21 @@ class ServerSentEventsBlueprint(Blueprint):
         A generator of ...
         """
         # TODO need to manage which topics we are subscribed to
-        current_app.my_logger.info("in messages method")
+        current_app.my_logger.debug("in messages method")
         self.consumer.subscribe([TOPIC_NAME])
         running = True
         while running:
-            current_app.my_logger.info("polling consumer")
+            current_app.my_logger.debug("polling consumer")
             try:
                 msg = self.consumer.poll(1.0)
                 if msg is None:
-                    sleep(2)
+                    sleep(1)
                     continue
                 if not msg.error():
-                    current_app.my_logger.info("got a message!")
-                    sleep(2)
-                    # print('Received message: %s' % msg.value().decode('utf-8'))
-                    payload = {'message': 'Could you move a little faster?',
-                               'author': 'Whiting'}
-                    #message = deserialiser.deserialise(msg.value)
-                    #current_app.my_logger.info(message.get_html())
-                    #payload = {'message': message.get_html(),
-                    #           'author': message.get_author()}
+                    message = deserialiser.deserialise(msg.value())
+                    current_app.my_logger.debug(message.get_html())
+                    payload = {'message': message.get_html(),
+                               'author': message.get_author()}
                     yield json.dumps(payload)
                 elif msg.error().code() != KafkaError._PARTITION_EOF:
                     current_app.my_logger.error(msg.error())
@@ -86,26 +81,12 @@ class ServerSentEventsBlueprint(Blueprint):
         A view function that streams server-sent events. Ignores any
         :mailheader:`Last-Event-ID` headers in the HTTP request.
         """
-        current_app.my_logger.info('hit stream method')
+        current_app.my_logger.debug('in stream method')
 
         @stream_with_context
         def generator():
-            # current_app.logger.info('hit generator method')
             for message in self.messages():
-                current_app.my_logger.info('Message in generator')
                 lines = ["data:{value}".format(value=line) for line in message.splitlines()]
-                lines.insert(0, "event:{value}".format(value='message'))
-                yield "\n".join(lines) + "\n\n"
-
-        @stream_with_context
-        def fake_generator():
-            for x in range(10):
-                sleep(3)
-                payload = {'message': 'Could you move a little faster?',
-                           'author': 'Whiting'}
-                current_app.my_logger.info('Message in fake_generator')
-                data = json.dumps(payload)
-                lines = ["data:{value}".format(value=line) for line in data.splitlines()]
                 lines.insert(0, "event:{value}".format(value='message'))
                 yield "\n".join(lines) + "\n\n"
 
