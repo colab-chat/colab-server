@@ -107,8 +107,9 @@ class TestingConfig(Config):
 def create_configuration(configuration_type=None):
     """
     Creates a configuration for flask to set up itself and the extensions. The
-    configuration can be either DevelopmentConfig, ProductionConfig or TestingConfig.
-    
+    configuration can be either DevelopmentConfig, ProductionConfig or
+    TestingConfig.
+
     :param configuration_type: The type of configuration as a string
     :return: a configuration class
     """
@@ -117,11 +118,13 @@ def create_configuration(configuration_type=None):
               TestingConfig.name: TestingConfig}
 
     if configuration_type is None:
-        configuration_name = os.environ.get('COLAB_CONFIG', ProductionConfig.name)
+        configuration_name = os.environ.get('COLAB_CONFIG',
+                                            ProductionConfig.name)
         return config[configuration_name]
     elif configuration_type in config:
         return config[configuration_type.name]
     else:
         raise ValueError("The colab configuration {} is not known. "
                          "Please select production, development or testing or"
-                         " set up the appropriate environment variable".format(configuration_type))
+                         " set up the appropriate "
+                         "environment variable".format(configuration_type))

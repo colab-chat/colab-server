@@ -2,7 +2,7 @@ import subprocess
 import sys
 from functools import partial
 
-from flask_script import Manager, Server
+from flask_script import Manager
 from colab_server import create_app, db
 from config import create_configuration
 
@@ -36,8 +36,10 @@ def drop_db():
 
 @manager.command
 def lint():
-    proc = subprocess.Popen(['flake8', '--ignore=E402', 'colab_server/', 'manage.py', 'config.py', 'wsgi.py'],
-                            stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(
+        ['flake8', '--ignore=E402', 'colab_server/', 'manage.py', 'config.py',
+         'wsgi.py'],
+        stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
     output, errors = proc.communicate()
     linting = proc.returncode == 0
 
@@ -48,6 +50,7 @@ def lint():
         print('flake8 found the following problems:')
         print(output.decode('utf-8'))
         sys.exit(1)
+
 
 if __name__ == '__main__':
     manager.run()
