@@ -4,4 +4,6 @@ python:
 # install dependencies
 install: "pip install -r ./web/requirements.txt"
 # run linter
-script: python ./web/manage.py lint
+script:
+  - sudo bash travis.sh
+  - python ./web/manage.py lint
