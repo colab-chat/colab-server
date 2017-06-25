@@ -13,53 +13,49 @@ parser.add_argument('-s', '--stop', action='store_true', help='stop docker conta
 parser.add_argument('-b', '--build', action='store_true', help='build docker containers')
 args = parser.parse_args()
 
-
-
 # -------------------------------
 # Check if colab is to be stopped
 # ------------------------------
 if args.stop:
-  # TODO need to check if other commands have been set
-  process_list = ["docker-compose", "stop"]
+    # TODO need to check if other commands have been set
+    process_list = ["docker-compose", "stop"]
 elif args.build:
-  # TODO need to check if other commands have been set
-  process_list = ["docker-compose", "build"]
+    # TODO need to check if other commands have been set
+    process_list = ["docker-compose", "build"]
 else:
-  # ---------------------------------
-  # Set up process for docker compose
-  # ---------------------------------
-  process_list = ["docker-compose", "-f", "docker-compose.yaml"]
- 
+    # ---------------------------------
+    # Set up process for docker compose
+    # ---------------------------------
+    process_list = ["docker-compose", "-f", "docker-compose.yaml"]
 
-  # -----------------------------
-  # Select correct docker-compose
-  # -----------------------------
-  run_type = args.run
-  if run_type == 1:
-    print("Running in development mode")
-    development_flags = ["-f",  "docker-compose.development.yaml"]
-    process_list.extend(development_flags)
-  elif run_type == 2:
-    print("Running in testing mode")
-  else:
-    print("Running in production mode")
-    production_flags = ["-f",  "docker-compose.production.yaml"]
-    process_list.extend(production_flags)
+    # -----------------------------
+    # Select correct docker-compose
+    # -----------------------------
+    run_type = args.run
+    if run_type == 1:
+        print("Running in development mode")
+        development_flags = ["-f", "docker-compose.development.yaml"]
+        process_list.extend(development_flags)
+    elif run_type == 2:
+        print("Running in testing mode")
+    else:
+        print("Running in production mode")
+        production_flags = ["-f", "docker-compose.production.yaml"]
+        process_list.extend(production_flags)
 
-  # ---------
-  # Up docker
-  # ---------
-  process_list.append("up")
+    # ---------
+    # Up docker
+    # ---------
+    process_list.append("up")
 
-  # ---------------------------------------
-  # Add detached mode
-  # ---------------------------------------
-  detach_mode = args.detach
-  if detach_mode:
-    process_list.append("-d")
+    # ---------------------------------------
+    # Add detached mode
+    # ---------------------------------------
+    detach_mode = args.detach
+    if detach_mode:
+        process_list.append("-d")
 
 # ----------------
 # Run docker
 # ----------------
 call(process_list)
-
