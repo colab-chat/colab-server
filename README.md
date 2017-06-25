@@ -28,7 +28,7 @@ If you don't stop the containers gracefully you may see the error "A broker is a
 
 Testing environment support is to come.
  
-The page is served to `loacalhost:80`.
+The page is served to `localhost:80`.
 
 ###### Lint
 
