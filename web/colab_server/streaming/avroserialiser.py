@@ -8,7 +8,8 @@ class AvroSerialiser:
     def __init__(self):
         pass
 
-    def serialise_message(self, message):
+    @staticmethod
+    def serialise_message(message):
         buffer = io.BytesIO()
         writer(buffer, schema, [{'id': uuid.uuid4().int,
                                  'author': message.get_author(),
@@ -19,7 +20,8 @@ class AvroSerialiser:
                                  'html': message.get_html()}])
         return buffer.getvalue()
 
-    def serialize_binary_message(self, message):
+    @staticmethod
+    def serialize_binary_message(message):
         buffer = io.BytesIO()
         writer(buffer, schema, [{'id': uuid.uuid4().int,
                                  'author': message.get_author(),
@@ -30,7 +32,8 @@ class AvroSerialiser:
                                  'html': message.get_html()}])
         return buffer.getvalue()
 
-    def serialise_event_message(self, event_type, name):
+    @staticmethod
+    def serialise_event_message(event_type, name):
         buffer = io.BytesIO()
         writer(buffer, event_schema, [{'event_type': event_type, 'name': name}])
         return buffer.getvalue()

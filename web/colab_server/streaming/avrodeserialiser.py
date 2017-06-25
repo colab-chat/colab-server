@@ -3,8 +3,6 @@ from fastavro import reader
 import io
 from ..messages.message import MessageType
 from ..messages.message_text import TextMessage
-from ..messages.message_python import PythonMessage
-from ..messages.message_r import RMessage
 from ..messages.message_image import ImageMessage
 from datetime import datetime
 
@@ -13,7 +11,8 @@ class AvroDeserialiser:
     def __init__(self):
         pass
 
-    def deserialise(self, buffer):
+    @staticmethod
+    def deserialise(buffer):
         output = reader(io.BytesIO(buffer), schema)
         new_message = None
         for message in output:
@@ -23,16 +22,6 @@ class AvroDeserialiser:
                                           datetime.fromtimestamp(0),
                                           message['topic'],
                                           message['raw_text'])
-            elif MessageType(message['type']) is MessageType.PYTHON:
-                new_message = PythonMessage(message['author'], 'last_author',
-                                            datetime.fromtimestamp(message['timestamp']),
-                                            datetime.fromtimestamp(0),
-                                            message['raw_text'], message['topic'], html=message['html'])
-            elif MessageType(message['type']) is MessageType.R:
-                new_message = RMessage(message['author'], 'last_author',
-                                       datetime.fromtimestamp(message['timestamp']),
-                                       datetime.fromtimestamp(0),
-                                       message['raw_text'], message['topic'], html=message['html'])
             elif MessageType(message['type']) is MessageType.IMAGE:
                 new_message = ImageMessage(message['author'], 'last_author',
                                            datetime.fromtimestamp(message['timestamp']),
