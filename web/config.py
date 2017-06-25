@@ -28,6 +28,8 @@ def secure_config(cls):
 # -------------------------------------------
 @secure_config
 class Config:
+    name = ""
+
     DEBUG = False
     TESTING = False
 
@@ -69,7 +71,7 @@ class Config:
 
     # ---------------------
     # Flask User
-    # --------------------
+    # ---------------------
     USER_APP_NAME = APP_NAME
     USER_ENABLE_CHANGE_PASSWORD = True
     USER_ENABLE_CHANGE_USERNAME = False
@@ -84,14 +86,18 @@ class Config:
 
 
 class DevelopmentConfig(Config):
+    name = "development"
     DEBUG = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class ProductionConfig(Config):
+    name = "production"
     pass
 
 
 class TestingConfig(Config):
+    name = "testing"
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
@@ -104,15 +110,15 @@ def create_configuration(configuration_type=None):
     :param configuration_type: The type of configuration as a string
     :return: a configuration class
     """
-    config = {'development': DevelopmentConfig,
-              'production': ProductionConfig,
-              'testing': TestingConfig}
+    config = {DevelopmentConfig.name: DevelopmentConfig,
+              ProductionConfig.name: ProductionConfig,
+              TestingConfig.name: TestingConfig}
 
     if configuration_type is None:
-        configuration_name = os.environ.get('COLAB_CONFIG', 'production')
+        configuration_name = os.environ.get('COLAB_CONFIG', ProductionConfig.name)
         return config[configuration_name]
     elif configuration_type in config:
-        return config[configuration_type]
+        return config[configuration_type.name]
     else:
         raise ValueError("The colab configuration {} is not known. "
                          "Please select production, development or testing or"

@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from .flask_sse_kafka import sse
+from flask_debugtoolbar import DebugToolbarExtension
 
 # ----------------
 # Flask extensions
@@ -11,6 +12,7 @@ from .flask_sse_kafka import sse
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 mail = Mail()
+debug_toolbar = DebugToolbarExtension()
 
 
 def create_app(configuration):
@@ -21,6 +23,7 @@ def create_app(configuration):
         raise ValueError("Missing configuration for CoLab")
     app = Flask(__name__)
     app.config.from_object(configuration)
+    print("Set up application with configuration for {}.".format(configuration.name))
 
     # ---------------------------
     # Initialize flask extensions
@@ -28,6 +31,7 @@ def create_app(configuration):
     db.init_app(app)
     mail.init_app(app)
     bootstrap.init_app(app)
+    debug_toolbar.init_app(app)
 
     # ---------------------------
     # Logger

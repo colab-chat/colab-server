@@ -1,4 +1,5 @@
 Flask
+Flask-Debugtoolbar
 Flask-User<0.7
 Flask-SQLAlchemy==2.1
 Flask-Bootstrap==3.3.5.7

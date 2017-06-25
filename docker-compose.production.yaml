@@ -1,0 +1,6 @@
+version: '2'
+
+services:
+ web:
+   environment:
+     COLAB_CONFIG: 'production'

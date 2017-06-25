@@ -11,13 +11,15 @@ services:
     depends_on:
       - kafka
 
-  nginx:
-    restart: always
-    build: ./nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - web
+ nginx:
+   restart: always
+   build: ./nginx
+   ports:
+     - "80:80"
+   volumes:
+     - ./web:/colab
+   depends_on:
+     - web
 
   kafka:
     image: ches/kafka:0.10.2.0
