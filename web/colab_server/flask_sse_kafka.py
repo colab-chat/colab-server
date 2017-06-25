@@ -26,8 +26,8 @@ class ServerSentEventsBlueprint(Blueprint):
     """
     producer = Producer({'bootstrap.servers': KAFKA_BROKER})
 
-    consumer = Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': 'idgroup',
-                        'default.topic.config': {'auto.offset.reset': 'smallest',
+    consumer = Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': None,
+                        'default.topic.config': {'auto.offset.reset': 'largest',
                                                  'enable.auto.commit': 'false'}})
 
     def publish(self, message, channel=TOPIC_NAME):
@@ -41,7 +41,7 @@ class ServerSentEventsBlueprint(Blueprint):
             Defaults to "test_avro_topic".
         """
         assert (isinstance(message, Message))
-        current_app.my_logger.warning('publishing message')
+        current_app.my_logger.debug('In ServerSentEventsBlueprint.publish: publishing message to kafka')
         try:
             self.producer.produce(channel, message.serialize(), callback=delivery_callback)
         except BufferError as e:
@@ -53,8 +53,7 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         A generator of ...
         """
-        # TODO need to manage which topics we are subscribed to
-        current_app.my_logger.debug("in messages method")
+        current_app.my_logger.debug("in ServerSentEventsBlueprint.messages")
         self.consumer.subscribe([TOPIC_NAME])
         running = True
         while running:
@@ -81,7 +80,7 @@ class ServerSentEventsBlueprint(Blueprint):
         A view function that streams server-sent events. Ignores any
         :mailheader:`Last-Event-ID` headers in the HTTP request.
         """
-        current_app.my_logger.debug('in stream method')
+        current_app.my_logger.debug('in ServerSentEventsBlueprint.stream')
 
         @stream_with_context
         def generator():
