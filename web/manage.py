@@ -36,12 +36,17 @@ def drop_db():
 
 @manager.command
 def lint():
-    linting = subprocess.call(['flake8', '--ignore=E402', '/colab_server/',
-                               'manage.py', 'config.py', 'wsgi.py']) == 0
+    proc = subprocess.Popen(['flake8', '--ignore=E402', 'colab_server/', 'manage.py', 'config.py', 'wsgi.py'],
+                            stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    output, errors = proc.communicate()
+    linting = proc.returncode == 0
+
     if linting:
         print('No linting issues.')
         sys.exit(0)
     else:
+        print('flake8 found the following problems:')
+        print(output.decode('utf-8'))
         sys.exit(1)
 
 if __name__ == '__main__':
