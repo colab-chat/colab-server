@@ -6,8 +6,17 @@ from confluent_kafka import Producer, Consumer, KafkaError
 from time import sleep
 
 KAFKA_BROKER = 'kafka'
+TOPIC_NAME = 'another_topic'
 serialiser = AvroSerialiser()
 deserialiser = AvroDeserialiser()
+
+
+def delivery_callback(err, msg):
+    if err:
+        current_app.my_logger.error('%% Message failed delivery: %s\n' % err)
+    else:
+        current_app.my_logger.error('%% Message delivered to %s [%d]\n' %
+                                    (msg.topic(), msg.partition()))
 
 
 class ServerSentEventsBlueprint(Blueprint):
@@ -15,23 +24,13 @@ class ServerSentEventsBlueprint(Blueprint):
     A :class:`flask.Blueprint` subclass that knows how to publish, subscribe to,
     and stream server-sent events.
     """
+    producer = Producer({'bootstrap.servers': KAFKA_BROKER})
 
-    @property
-    def producer(self):
-        """
-        A :class:`kafka.KafkaProducer` instance
-        """
-        return Producer({'bootstrap.servers': KAFKA_BROKER})
+    consumer = Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': 'idgroup',
+                        'default.topic.config': {'auto.offset.reset': 'smallest',
+                                                 'enable.auto.commit': 'false'}})
 
-    @property
-    def consumer(self):
-        """
-        A :class:`kafka.KafkaConsumer` instance
-        """
-        return Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': None,
-                         'default.topic.config': {'auto.offset.reset': 'smallest'}})
-
-    def publish(self, message, channel='test_avro_topic'):
+    def publish(self, message, channel=TOPIC_NAME):
         """
         Publish data as a server-sent event.
         :param message: The message to send.
@@ -43,27 +42,44 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         assert (isinstance(message, Message))
         current_app.my_logger.warning('publishing message')
-        self.producer.produce(channel, message.serialize())
-        self.producer.flush()
+        try:
+            self.producer.produce(channel, message.serialize(), callback=delivery_callback)
+        except BufferError as e:
+            current_app.my_logger.error('%% Local producer queue is full (%d messages awaiting delivery): try again\n' %
+                                        len(self.producer))
+        self.producer.poll(0)
 
     def messages(self):
         """
         A generator of ...
         """
         # TODO need to manage which topics we are subscribed to
-        # current_app.logger.info("in messages method")
-        self.consumer.subscribe(['test_avro_topic'])
+        current_app.my_logger.info("in messages method")
+        self.consumer.subscribe([TOPIC_NAME])
         running = True
         while running:
-            msg = self.consumer.poll()
-            if not msg.error():
-                # print('Received message: %s' % msg.value().decode('utf-8'))
-                payload = {'message': 'Could you move a little faster?',
-                           'author': 'Whiting'}
-                yield json.dumps(payload)
-            elif msg.error().code() != KafkaError._PARTITION_EOF:
-                current_app.logger.error(msg.error())
-                running = False
+            current_app.my_logger.info("polling consumer")
+            try:
+                msg = self.consumer.poll(1.0)
+                if msg is None:
+                    sleep(2)
+                    continue
+                if not msg.error():
+                    current_app.my_logger.info("got a message!")
+                    sleep(2)
+                    # print('Received message: %s' % msg.value().decode('utf-8'))
+                    payload = {'message': 'Could you move a little faster?',
+                               'author': 'Whiting'}
+                    #message = deserialiser.deserialise(msg.value)
+                    #current_app.my_logger.info(message.get_html())
+                    #payload = {'message': message.get_html(),
+                    #           'author': message.get_author()}
+                    yield json.dumps(payload)
+                elif msg.error().code() != KafkaError._PARTITION_EOF:
+                    current_app.my_logger.error(msg.error())
+                    running = False
+            except:
+                current_app.my_logger.error('error polling consumer')
 
     def stream(self):
         """
@@ -76,7 +92,7 @@ class ServerSentEventsBlueprint(Blueprint):
         def generator():
             # current_app.logger.info('hit generator method')
             for message in self.messages():
-                # current_app.my_logger.info('Message in generator')
+                current_app.my_logger.info('Message in generator')
                 lines = ["data:{value}".format(value=line) for line in message.splitlines()]
                 lines.insert(0, "event:{value}".format(value='message'))
                 yield "\n".join(lines) + "\n\n"
@@ -87,6 +103,7 @@ class ServerSentEventsBlueprint(Blueprint):
                 sleep(3)
                 payload = {'message': 'Could you move a little faster?',
                            'author': 'Whiting'}
+                current_app.my_logger.info('Message in fake_generator')
                 data = json.dumps(payload)
                 lines = ["data:{value}".format(value=line) for line in data.splitlines()]
                 lines.insert(0, "event:{value}".format(value='message'))
