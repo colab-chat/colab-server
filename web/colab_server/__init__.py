@@ -38,9 +38,8 @@ def create_app(configuration):
         '%(asctime)s %(levelname)s: %(message)s '
         '[in %(pathname)s:%(lineno)d]'
     ))
-    app.my_logger = logging.getLogger("app_logger")
-    app.my_logger.addHandler(file_handler)
-    app.my_logger.setLevel(logging.DEBUG)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.DEBUG)
 
     # --------------------
     # Authentication setup

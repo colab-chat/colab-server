@@ -13,9 +13,9 @@ deserialiser = AvroDeserialiser()
 
 def delivery_callback(err, msg):
     if err:
-        current_app.my_logger.error('%% Message failed delivery: %s\n' % err)
+        current_app.logger.error('%% Message failed delivery: %s\n' % err)
     else:
-        current_app.my_logger.error('%% Message delivered to %s [%d]\n' %
+        current_app.logger.error('%% Message delivered to %s [%d]\n' %
                                     (msg.topic(), msg.partition()))
 
 
@@ -41,11 +41,11 @@ class ServerSentEventsBlueprint(Blueprint):
             Defaults to "test_avro_topic".
         """
         assert (isinstance(message, Message))
-        current_app.my_logger.debug('In ServerSentEventsBlueprint.publish: publishing message to kafka')
+        current_app.logger.debug('In ServerSentEventsBlueprint.publish: publishing message to kafka')
         try:
             self.producer.produce(channel, message.serialize(), callback=delivery_callback)
         except BufferError as e:
-            current_app.my_logger.error('%% Local producer queue is full (%d messages awaiting delivery): try again\n' %
+            current_app.logger.error('%% Local producer queue is full (%d messages awaiting delivery): try again\n' %
                                         len(self.producer))
         self.producer.poll(0)
 
@@ -53,11 +53,11 @@ class ServerSentEventsBlueprint(Blueprint):
         """
         A generator of ...
         """
-        current_app.my_logger.debug("in ServerSentEventsBlueprint.messages")
+        current_app.logger.debug("in ServerSentEventsBlueprint.messages")
         self.consumer.subscribe([TOPIC_NAME])
         running = True
         while running:
-            current_app.my_logger.debug("polling consumer")
+            current_app.logger.debug("polling consumer")
             try:
                 msg = self.consumer.poll(1.0)
                 if msg is None:
@@ -65,22 +65,22 @@ class ServerSentEventsBlueprint(Blueprint):
                     continue
                 if not msg.error():
                     message = deserialiser.deserialise(msg.value())
-                    current_app.my_logger.debug(message.get_html())
+                    current_app.logger.debug(message.get_html())
                     payload = {'message': message.get_html(),
                                'author': message.get_author()}
                     yield json.dumps(payload)
                 elif msg.error().code() != KafkaError._PARTITION_EOF:
-                    current_app.my_logger.error(msg.error())
+                    current_app.logger.error(msg.error())
                     running = False
             except:
-                current_app.my_logger.error('error polling consumer')
+                current_app.logger.error('error polling consumer')
 
     def stream(self):
         """
         A view function that streams server-sent events. Ignores any
         :mailheader:`Last-Event-ID` headers in the HTTP request.
         """
-        current_app.my_logger.debug('in ServerSentEventsBlueprint.stream')
+        current_app.logger.debug('in ServerSentEventsBlueprint.stream')
 
         @stream_with_context
         def generator():
