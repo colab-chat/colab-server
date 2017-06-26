@@ -1,6 +1,7 @@
 # colab-server
 
 [![Build Status](https://travis-ci.org/colab-chat/colab-server.svg?branch=master)](https://travis-ci.org/colab-chat/colab-server)
+[![License (GPL-3.0)](https://img.shields.io/badge/license-GPL%203.0-blue.svg)](https://github.com/colab-chat/colab-server/blob/master/LICENSE)
 
 This is the server part of the CoLab chat app.
 
