@@ -14,7 +14,7 @@ class MessageType(Enum):
 
 class Message(metaclass=ABCMeta):
     def __init__(self, author, last_author, time_created, time_last_modified,
-                 message, topic, html=None):
+                 topic, message, html=None):
         if not isinstance(time_created, datetime):
             raise ValueError(
                 "time_stamp: Expected a datetime object, got {}".format(

@@ -3,7 +3,7 @@ from .message import (Message, MessageType)
 
 class TextMessage(Message):
     def __init__(self, author, last_author, time_created, time_last_modified,
-                 topic, message):
+                 message, topic):
         super(TextMessage, self).__init__(
             author=author,
             last_author=last_author,
