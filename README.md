@@ -27,10 +27,12 @@ To run in development mode you can either use `./colab.py -r 1` or `./colab.py -
 To run in detached mode add `-d` or `--detached`.
 To stop use `./colab.py -s` or `./colab.py --stop`.
 
+If you don't stop the containers gracefully you may see the error "A broker is already registered on the path /brokers/ids/1." when restarting. This can be fixed by `docker-compose kill` then bring back up as normal.
+
 Testing environment support is to come.
  
-The page is served to `loacalhost:80`.
+The page is served to `localhost:80`.
 
 ###### Lint
 
-To perform lint checking, run `python ./web/manage.py lint`.
+To perform lint checking, run `cd web && python manage.py lint`.

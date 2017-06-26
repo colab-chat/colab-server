@@ -6,13 +6,12 @@ from flask_script import Manager
 from colab_server import create_app, db
 from config import create_configuration
 
-# --------------------------------
+# -------------------------------
 # Flask script manager
 # -------------------------------
 configuration = create_configuration()
 app_with_configuration = partial(create_app, configuration)
 manager = Manager(app_with_configuration)
-
 
 # Set the server configuration TODO: parametrize this to adapt according
 #                                    to app.config

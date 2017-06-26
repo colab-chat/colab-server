@@ -1,8 +1,9 @@
 from flask import Flask
+import logging
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from flask_sse import sse
+from .flask_sse_kafka import sse
 from flask_debugtoolbar import DebugToolbarExtension
 
 # ----------------
@@ -32,6 +33,18 @@ def create_app(configuration):
     mail.init_app(app)
     bootstrap.init_app(app)
     debug_toolbar.init_app(app)
+
+    # ---------------------------
+    # Logger
+    # ---------------------------
+    file_handler = logging.FileHandler('web_log.txt')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.DEBUG)
 
     # --------------------
     # Authentication setup

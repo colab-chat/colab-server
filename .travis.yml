@@ -1,6 +1,7 @@
 language: python
 python:
   - "3.5"
+before_install: sudo bash travis.sh
 # install dependencies
 install: "pip install -r ./web/requirements.txt"
 # run linter
