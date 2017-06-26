@@ -41,7 +41,10 @@ else:
         development_flags = ["-f", "docker-compose.development.yaml"]
         process_list.extend(development_flags)
     elif run_type == 'tests':
+        import pytest
         print("Running in testing mode")
+        pytest.main()
+        exit()
     else:
         print("Running in production mode")
         production_flags = ["-f", "docker-compose.production.yaml"]
