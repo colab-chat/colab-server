@@ -9,6 +9,7 @@ class MessageType(Enum):
     PYTHON = 2
     R = 3
     IMAGE = 4
+    MOCK = 99
 
 
 class Message(metaclass=ABCMeta):
