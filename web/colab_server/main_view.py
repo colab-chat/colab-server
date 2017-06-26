@@ -21,5 +21,6 @@ def index():
 @main.route('/hello')
 def publish_hello():
     sse.publish(
-        TextMessage('author', 'last_author', datetime.now(), datetime.now(), 'test_avro_topic', 'Life is good!'))
+        TextMessage('author', 'last_author', datetime.now(), datetime.now(),
+                    'test_avro_topic', 'Life is good!'))
     return "Message sent!"
