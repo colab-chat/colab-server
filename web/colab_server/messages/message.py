@@ -12,15 +12,22 @@ class MessageType(Enum):
 
 
 class Message(metaclass=ABCMeta):
-    def __init__(self, author, last_author, time_created, time_last_modified, message, topic, html=None):
+    def __init__(self, author, last_author, time_created, time_last_modified,
+                 message, topic, html=None):
         if not isinstance(time_created, datetime):
-            raise ValueError("time_stamp: Expected a datetime object, got {}".format(type(time_created)))
+            raise ValueError(
+                "time_stamp: Expected a datetime object, got {}".format(
+                    type(time_created)))
         if not isinstance(time_last_modified, datetime):
-            raise ValueError("last_modified: Expected a datetime object, got {}".format(type(time_last_modified)))
+            raise ValueError(
+                "last_modified: Expected a datetime object, got {}".format(
+                    type(time_last_modified)))
         if not isinstance(author, str):
-            raise ValueError("author: Expected a string, got {}".format(type(author)))
+            raise ValueError(
+                "author: Expected a string, got {}".format(type(author)))
         if not isinstance(last_author, str):
-            raise ValueError("last_author: Expected a string, got {}".format(type(last_author)))
+            raise ValueError("last_author: Expected a string, got {}".format(
+                type(last_author)))
 
         self._author = author
         self._last_author = last_author

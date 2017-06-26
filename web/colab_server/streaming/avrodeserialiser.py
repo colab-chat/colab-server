@@ -18,17 +18,21 @@ class AvroDeserialiser:
         for message in output:
             if MessageType(message['type']) is MessageType.TEXT:
                 new_message = TextMessage(message['author'], 'last_author',
-                                          datetime.fromtimestamp(message['timestamp']),
+                                          datetime.fromtimestamp(
+                                              message['timestamp']),
                                           datetime.fromtimestamp(0),
                                           message['topic'],
                                           message['raw_text'])
             elif MessageType(message['type']) is MessageType.IMAGE:
                 new_message = ImageMessage(message['author'], 'last_author',
-                                           datetime.fromtimestamp(message['timestamp']),
+                                           datetime.fromtimestamp(
+                                               message['timestamp']),
                                            datetime.fromtimestamp(0),
-                                           message['binary'], message['topic'], html=message['html'])
+                                           message['binary'], message['topic'],
+                                           html=message['html'])
             else:
-                raise ValueError('Unrecognised message type in AvroSerialise.deserialise')
+                raise ValueError(
+                    'Unrecognised message type in AvroSerialise.deserialise')
         return new_message
 
     def deserialise_event_message(self, buffer):

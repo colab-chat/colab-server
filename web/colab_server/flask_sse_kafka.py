@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app, json, stream_with_context
+from flask import Blueprint, current_app, json, stream_with_context
 from .streaming.avroserialiser import AvroSerialiser
 from .streaming.avrodeserialiser import AvroDeserialiser
 from .messages.message import Message
@@ -16,19 +16,20 @@ def delivery_callback(err, msg):
         current_app.logger.error('%% Message failed delivery: %s\n' % err)
     else:
         current_app.logger.error('%% Message delivered to %s [%d]\n' %
-                                    (msg.topic(), msg.partition()))
+                                 (msg.topic(), msg.partition()))
 
 
 class ServerSentEventsBlueprint(Blueprint):
     """
-    A :class:`flask.Blueprint` subclass that knows how to publish, subscribe to,
-    and stream server-sent events.
+    A :class:`flask.Blueprint` subclass that knows how to publish,
+    subscribe to, and stream server-sent events.
     """
     producer = Producer({'bootstrap.servers': KAFKA_BROKER})
 
     consumer = Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': None,
-                        'default.topic.config': {'auto.offset.reset': 'largest',
-                                                 'enable.auto.commit': 'false'}})
+                         'default.topic.config': {
+                             'auto.offset.reset': 'largest',
+                             'enable.auto.commit': 'false'}})
 
     def publish(self, message, channel=TOPIC_NAME):
         """
@@ -41,12 +42,15 @@ class ServerSentEventsBlueprint(Blueprint):
             Defaults to "test_avro_topic".
         """
         assert (isinstance(message, Message))
-        current_app.logger.debug('In ServerSentEventsBlueprint.publish: publishing message to kafka')
+        current_app.logger.debug(
+            'ServerSentEventsBlueprint.publish: publishing message to kafka')
         try:
-            self.producer.produce(channel, message.serialize(), callback=delivery_callback)
+            self.producer.produce(channel, message.serialize(),
+                                  callback=delivery_callback)
         except BufferError as e:
-            current_app.logger.error('%% Local producer queue is full (%d messages awaiting delivery): try again\n' %
-                                        len(self.producer))
+            current_app.logger.error(
+                '%% Local producer queue is full (%d messages waiting)\n' %
+                len(self.producer))
         self.producer.poll(0)
 
     def messages(self):
@@ -85,7 +89,8 @@ class ServerSentEventsBlueprint(Blueprint):
         @stream_with_context
         def generator():
             for message in self.messages():
-                lines = ["data:{value}".format(value=line) for line in message.splitlines()]
+                lines = ["data:{value}".format(value=line) for line in
+                         message.splitlines()]
                 lines.insert(0, "event:{value}".format(value='message'))
                 yield "\n".join(lines) + "\n\n"
 

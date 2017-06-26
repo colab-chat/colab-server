@@ -32,4 +32,4 @@ The page is served to `localhost:80`.
 
 ###### Lint
 
-To perform lint checking, run `python ./web/manage.py lint`.
+To perform lint checking, run `cd web && python manage.py lint`.
