@@ -65,7 +65,7 @@ class ServerSentEventsBlueprint(Blueprint):
             try:
                 msg = self.consumer.poll(1.0)
                 if msg is None:
-                    sleep(1)
+                    sleep(0.05)
                     continue
                 if not msg.error():
                     message = deserialiser.deserialise(msg.value())
