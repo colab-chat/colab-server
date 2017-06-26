@@ -22,16 +22,19 @@ sudo usermod -aG docker $USER
 ##### Run
 
 To start the webserver use `colab.py`.
-To run in production mode you can either use `./colab.py` or `./colab.py -r 0` or `./colab.py --run 0`.
-To run in development mode you can either use `./colab.py -r 1` or `./colab.py --run 1`.
+To run in production mode you can either use `./colab.py` or `./colab.py -r prod` or `./colab.py --run prod`.
+To run in development mode you can either use `./colab.py -r dev` or `./colab.py --run dev`.
 To run in detached mode add `-d` or `--detached`.
 To stop use `./colab.py -s` or `./colab.py --stop`.
 
 If you don't stop the containers gracefully you may see the error "A broker is already registered on the path /brokers/ids/1." when restarting. This can be fixed by `docker-compose kill` then bring back up as normal.
 
-Testing environment support is to come.
- 
 The page is served to `localhost:80`.
+
+Unit tests can be run with `./colab.py -r tests` after installing pytest with
+```
+pip install pytest
+```
 
 ###### Lint
 
