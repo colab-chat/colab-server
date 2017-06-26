@@ -61,7 +61,6 @@ class ServerSentEventsBlueprint(Blueprint):
         self.consumer.subscribe([TOPIC_NAME])
         running = True
         while running:
-            current_app.logger.debug("polling consumer")
             try:
                 msg = self.consumer.poll(1.0)
                 if msg is None:
