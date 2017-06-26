@@ -1,5 +1,7 @@
 # colab-server
 
+[![Build Status](https://travis-ci.org/colab-chat/colab-server.svg?branch=master)](https://travis-ci.org/colab-chat/colab-server)
+
 This is the server part of the CoLab chat app.
 
 #### Set up
