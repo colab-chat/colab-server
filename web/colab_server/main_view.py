@@ -17,6 +17,7 @@ def index():
 
 @main.route('/hello')
 def publish_hello():
-    sse.publish({"user": "alice", "status": "Life is good!"}, channel="users.social", type='greeting')
+    sse.publish({"user": "alice", "status": "Life is good!"},
+                channel="users.social", type='greeting')
     sse.publish({"message": "Hello!"}, type='greeting')
     return "Message sent!"

@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_sse import sse
 from flask_debugtoolbar import DebugToolbarExtension
 
-
 # ----------------
 # Flask extensions
 # ----------------
@@ -23,7 +22,8 @@ def create_app(configuration):
         raise ValueError("Missing configuration for CoLab")
     app = Flask(__name__)
     app.config.from_object(configuration)
-    print("Set up application with configuration for {}.".format(configuration.name))
+    print("Set up application with configuration for {}.".format(
+        configuration.name))
 
     # ---------------------------
     # Initialize flask extensions
