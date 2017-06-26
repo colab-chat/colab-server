@@ -65,7 +65,7 @@ class ServerSentEventsBlueprint(Blueprint):
             try:
                 msg = self.consumer.poll(1.0)
                 if msg is None:
-                    sleep(1)
+                    sleep(0.05)
                     continue
                 if not msg.error():
                     message = deserialiser.deserialise(msg.value())
@@ -75,7 +75,6 @@ class ServerSentEventsBlueprint(Blueprint):
                     yield json.dumps(payload)
                 elif msg.error().code() != KafkaError._PARTITION_EOF:
                     current_app.logger.error(msg.error())
-                    running = False
             except:
                 current_app.logger.error('error polling consumer')
 
