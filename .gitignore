@@ -106,3 +106,4 @@ ENV/
 # CoLab files
 web/colab_server.sqlite
 web/secure_config.ini
+web/web_log.txt
