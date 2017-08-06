@@ -1,17 +1,191 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p> This is the space for the chat client</p>
-<img src="{{url_for('static', filename='images/img.jpg')}}" alt="im" style="width:500px;height:500px;">
-  <h1>Flask-SSE Quickstart</h1>
-  <script>
+
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/UI_style.css') }}">
+<script src="{{ url_for('static', filename='javascript/UI_functionality.js') }}"></script>
+
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+<!--Syntax Highlighting -->
+<link rel="stylesheet" href="{{ url_for('static', filename='codemirror/lib/codemirror.css') }}">
+<script src="{{ url_for('static', filename='codemirror/lib/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/addon/edit/matchbrackets.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/mode/python/python.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/mode/stex/stex.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/mode/r/r.js') }}"></script>
+
+<!--SSE -->
+<script>
     var source = new EventSource("{{url_for('sse.stream')}}");
     source.addEventListener('message', function(event) {
         var data = JSON.parse(event.data);
-        alert("The server says " + data.message);
+        var m = $("#"+data.topic);
+
+        if(m.length == 0) {
+            //If topic doesn't exist for message create it
+            var k = $("#topics");
+            var n = $("#chat-boxes");
+                n.append("<div class='chat-container' id="+data.name+"></div>")
+                k.append("<div class='user-profile' data-up="+data.name+"></div><span>"+data.name+"</span>");
+                  $('.user-profile').click(function() {
+                            $('.chat-container').hide();
+                            $('.user-profile.active').removeClass('active');
+                            $('#'+$(this).attr('data-up')).show();
+                            $(this).addClass('active');
+                  });
+        }
+        m.append("<div class='bubble' data-msg-raw='"+data.raw_message+"' data-msg-type='"+data.message_type+"'><p>"+data.message+"</p></div><span class='datestamp dt-alt'>"+data.time_created+"~<b>"+data.author+"</b></span>");
+
+        //Needed because MathJax only formats on page load
+        MathJax.Hub.Queue(["<Types></Types>et", MathJax.Hub, "messages"]);
+
+        var d = $('.chat-container');
+        d.scrollTop(d.prop("scrollHeight"));
+
+        $( ".bubble" ).click(function() {
+            $('.editor-input').hide();
+            $('.script-editor.active').removeClass('active');
+
+            msg_type = $(this).attr('data-msg-type');
+            msg_raw = $(this).attr('data-msg-raw');
+            if( msg_type == 1)  { //Text
+                $('#editor1').show();
+                $('#editor1-btn').addClass('active');
+                MyProject.cmeditor1.setValue(msg_raw);
+                console.log(msg_raw)
+            } else if( msg_type == 2 ) { //Python
+                $('#editor2').show();
+                $('#editor2-btn').addClass('active');
+                MyProject.cmeditor2.setValue(msg_raw);
+            } else if( msg_type == 3 ) { //Python
+                $('#editor3').show();
+                $('#editor3-btn').addClass('active');
+                MyProject.cmeditor3.setValue(msg_raw);
+            }
+        });
+
     }, false);
     source.addEventListener('error', function(event) {
         alert("Failed to connect to event stream. Is Kafka running?");
     }, false);
-  </script>
+
+</script>
+
+<body>
+<div class="container-fluid">
+    <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+
+
+                <div class="editor-header">
+                    <div class="script-editor active" id="editor1-btn" data-up='editor1'></div>
+                    <span>Text</span>
+                    <div class="script-editor" id="editor2-btn" data-up='editor2'></div>
+                    <span>Python</span>
+                    <div class="script-editor" id="editor3-btn" data-up='editor3'></div>
+                    <span>R</span>
+                    <div class="script-editor" id="editor4-btn" data-up='editor4'></div>
+                    <span>Upload</span>
+                    <button id="send-btn" type="button" class="btn btn-primary">Send</button>
+                    <span></span>
+                </div>
+
+                <div class="editor-box">
+                    <div class="editor-input" id="editor1"><textarea id="editor1-textarea">Type text here</textarea>
+                    </div>
+                    <div class="editor-input" id="editor2"><textarea
+                            id="editor2-textarea">Type Python code here</textarea></div>
+                    <div class="editor-input" id="editor3"><textarea id="editor3-textarea">Type R code here</textarea>
+                    </div>
+                    <div class="editor-input" id="editor4">
+                        <form id="upload-file" method="post" enctype="multipart/form-data">
+                            <fieldset>
+                                <label for="file">Select a file</label>
+                                <input name="file" type="file">
+
+                                <button class="btn btn-default" id="upload-file-btn" type="button">Upload file</button>
+                            </fieldset>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+
+
+            <div class="chat-header">
+                <div id="topics" style="display: inline;">
+                    <div class="user-profile active" data-up='General'></div>
+                    <span>General</span></div>
+                <input type="text" id="new-topic-name"
+                       style="position: absolute; right:150px; width:100px; color: black;">
+                <button type="button" title="Add Channel" id="create-topic-btn" class="btn btn-success"
+                        style="right:100px;">+
+                </button>
+                <button id="export-py" onclick="location.href='/download_python_notebook';"
+                        title="Export Python code"></button>
+                <button id="export-r" onclick="location.href='/download_r_notebook';" title="Export R code"></button>
+            </div>
+
+            <div class="chat-box" id='chat-boxes'>
+
+                <div class="chat-container active" id='General'>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $( "#send-btn" ).click(function() {
+          var editor = $('.script-editor.active').attr("data-up");
+
+          topic = $('.user-profile.active').attr("data-up");
+
+          console.log("Message to: "+topic)
+
+          if(editor == "editor1") { //text editor
+              $.post( "/send", {type:"text",message:MyProject.cmeditor1.getValue(), topic:topic} );
+              MyProject.cmeditor1.setValue('')
+          } else if (editor == "editor2") {
+              $.post( "/send", {type:"python",message:MyProject.cmeditor2.getValue(), topic:topic} );
+              MyProject.cmeditor2.setValue('')
+          } else if (editor == "editor3") {
+              $.post( "/send", {type:"r",message:MyProject.cmeditor3.getValue(), topic:topic} );
+              MyProject.cmeditor3.setValue('')
+          }
+        });
+        $( "#create-topic-btn" ).click(function() {
+          new_topic = $('#new-topic-name').val();
+          $.post( "/create_topic", {topic:new_topic});
+          $('#new-topic-name').val("");
+        });
+        $('#upload-file-btn').click(function() {
+                var form_data = new FormData($('#upload-file')[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload_image',
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    async: false,
+                    success: function(data) {
+                        console.log('Success!');
+                    },
+                });
+        });
+
+</script>
+
+</body>
+
 {% endblock %}
