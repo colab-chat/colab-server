@@ -2,8 +2,6 @@ import env
 import pytest
 from datetime import datetime
 from web.colab_server.messages.message import Message, MessageType
-from web.colab_server.messages.message_text import TextMessage
-from web.colab_server.messages.message_image import ImageMessage
 
 
 class FakeMessage(Message):
