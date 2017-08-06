@@ -36,7 +36,7 @@ def test_message_non_string_author_fails():
                     datetime.now(), 'test_topic', 'message test string')
 
 
-def test_message_get_author():
+def test_message_get_author_matches_initialised_author():
     author = 'test_author'
     message = FakeMessage(author, 'last_test_author', datetime.now(),
                           datetime.now(), 'test_topic', 'message test string')
@@ -50,7 +50,7 @@ def test_message_non_string_last_author_fails():
                     datetime.now(), 'test_topic', 'message test string')
 
 
-def test_message_get_last_author():
+def test_message_get_last_author_matches_initialised_last_author():
     last_author = 'last_test_author'
     message = FakeMessage('test_author', last_author, datetime.now(),
                           datetime.now(), 'test_topic', 'message test string')
@@ -64,7 +64,7 @@ def test_message_non_datetime_created_fails():
                     datetime.now(), 'test_topic', 'message test string')
 
 
-def test_message_get_time_created():
+def test_message_get_time_created_matches_initialised_time():
     time_created = datetime.now()
     message = FakeMessage('test_author', 'test_last_author', time_created,
                           datetime.now(), 'test_topic', 'message test string')
@@ -78,21 +78,21 @@ def test_message_non_datetime_last_modified_fails():
                     time_modified, 'test_topic', 'message test string')
 
 
-def test_message_get_time_modified():
+def test_message_get_time_modified_matches_initialised_time():
     time_modified = datetime.now()
     message = FakeMessage('test_author', 'test_last_author', datetime.now(),
                           time_modified, 'test_topic', 'message test string')
     assert message.get_time_last_modified() == time_modified
 
 
-def test_message_get_message():
+def test_message_get_message_matches_initialised_message():
     message_contents = 'message test string'
     message = FakeMessage('test_author', 'test_last_author', datetime.now(),
                           datetime.now(), 'test_topic', message_contents)
     assert message.get_raw_message() == message_contents
 
 
-def test_message_get_topic():
+def test_message_get_topic_matches_initialised_topic():
     topic = 'test_topic'
     message = FakeMessage('test_author', 'test_last_author', datetime.now(),
                           datetime.now(), topic, 'message test string')
