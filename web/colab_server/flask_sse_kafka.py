@@ -15,7 +15,7 @@ def delivery_callback(err, msg):
     if err:
         current_app.logger.error('%% Message failed delivery: %s\n' % err)
     else:
-        current_app.logger.error('%% Message delivered to %s [%d]\n' %
+        current_app.logger.debug('%% Message delivered to %s [%d]\n' %
                                  (msg.topic(), msg.partition()))
 
 
