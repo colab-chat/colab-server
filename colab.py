@@ -7,8 +7,7 @@ parser = argparse.ArgumentParser(description='CoLab Startup')
 
 # Add acceptable arguments and parse
 parser.add_argument('-r', '--run', type=str, choices=['prod', 'dev', 'tests'],
-                    help='set run type: 0=production, 1=development, 2=testing',
-                    default=0)
+                    default='prod')
 parser.add_argument('-d', '--detach', action='store_true',
                     help='start docker in detached mode')
 parser.add_argument('-s', '--stop', action='store_true',
