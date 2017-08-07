@@ -29,7 +29,8 @@ class ServerSentEventsBlueprint(Blueprint):
     consumer = Consumer({'bootstrap.servers': KAFKA_BROKER, 'group.id': None,
                          'default.topic.config': {
                              'auto.offset.reset': 'largest',
-                             'enable.auto.commit': 'false'}})
+                             'enable.auto.commit': 'false',
+                             'batch.num.messages': 1}})
 
     def publish(self, message, channel=TOPIC_NAME):
         """
