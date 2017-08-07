@@ -70,7 +70,12 @@ class ServerSentEventsBlueprint(Blueprint):
                     message = deserialiser.deserialise(msg.value())
                     current_app.logger.debug(message.get_html())
                     payload = {'message': message.get_html(),
-                               'author': message.get_author()}
+                               'name': message.get_author(),
+                               'topic': message.get_topic(),
+                               'raw_message': message.get_raw_message(),
+                               'message_type': message.get_message_type(),
+                               'time_created': message.get_time_created(),
+                               }
                     yield json.dumps(payload)
                 elif msg.error().code() != KafkaError._PARTITION_EOF:
                     current_app.logger.error(msg.error())
