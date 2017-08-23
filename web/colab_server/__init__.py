@@ -3,7 +3,6 @@ import logging
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from .flask_sse_kafka import sse
 from flask_debugtoolbar import DebugToolbarExtension
 
 # ----------------
@@ -16,6 +15,9 @@ debug_toolbar = DebugToolbarExtension()
 
 
 def create_app(configuration):
+    from .flask_sse_kafka import sse
+    # import sse here to avoid starting consumer during unit tests
+
     # ------------------------
     # Set up colab_server configuration
     # ------------------------

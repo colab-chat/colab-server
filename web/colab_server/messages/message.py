@@ -9,11 +9,12 @@ class MessageType(Enum):
     PYTHON = 2
     R = 3
     IMAGE = 4
+    MOCK = 99
 
 
 class Message(metaclass=ABCMeta):
     def __init__(self, author, last_author, time_created, time_last_modified,
-                 message, topic, html=None):
+                 topic, message, html=None):
         if not isinstance(time_created, datetime):
             raise ValueError(
                 "time_stamp: Expected a datetime object, got {}".format(

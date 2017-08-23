@@ -6,11 +6,14 @@ from subprocess import call
 parser = argparse.ArgumentParser(description='CoLab Startup')
 
 # Add acceptable arguments and parse
-parser.add_argument('-r', '--run', type=int, choices=[0, 1, 2],
-                    help='set run type: 0=production, 1=development, 2=testing', default=0)
-parser.add_argument('-d', '--detach', action='store_true', help='start docker in detached mode')
-parser.add_argument('-s', '--stop', action='store_true', help='stop docker containers')
-parser.add_argument('-b', '--build', action='store_true', help='build docker containers')
+parser.add_argument('-r', '--run', type=str, choices=['prod', 'dev', 'tests'],
+                    default='prod')
+parser.add_argument('-d', '--detach', action='store_true',
+                    help='start docker in detached mode')
+parser.add_argument('-s', '--stop', action='store_true',
+                    help='stop docker containers')
+parser.add_argument('-b', '--build', action='store_true',
+                    help='build docker containers')
 args = parser.parse_args()
 
 # -------------------------------
@@ -32,12 +35,15 @@ else:
     # Select correct docker-compose
     # -----------------------------
     run_type = args.run
-    if run_type == 1:
+    if run_type == 'dev':
         print("Running in development mode")
         development_flags = ["-f", "docker-compose.development.yaml"]
         process_list.extend(development_flags)
-    elif run_type == 2:
+    elif run_type == 'tests':
+        import pytest
         print("Running in testing mode")
+        pytest.main()
+        exit()
     else:
         print("Running in production mode")
         production_flags = ["-f", "docker-compose.production.yaml"]

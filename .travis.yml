@@ -1,8 +1,19 @@
 language: python
+
+env:
+  - FLAKE=true
+  - FLAKE=false
+matrix:
+  allow_failures:
+    - env: FLAKE=true
 python:
   - "3.5"
 before_install: sudo bash travis.sh
 # install dependencies
-install: "pip install -r ./web/requirements.txt"
+install:
+  - pip install -r ./web/requirements.txt
+  - pip install pytest
 # run linter
-script: python ./web/manage.py lint
+script:
+  - if $FLAKE ; then python ./web/manage.py lint ; fi
+  - python colab.py -r tests

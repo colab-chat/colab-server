@@ -22,5 +22,5 @@ def index():
 def publish_hello():
     sse.publish(
         TextMessage('author', 'last_author', datetime.now(), datetime.now(),
-                    'test_avro_topic', 'Life is good!'))
+                    'Life is good!', 'test_avro_topic'))
     return "Message sent!"
